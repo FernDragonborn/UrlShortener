@@ -1,4 +1,5 @@
 
+using LittlePictureNetworkBackend.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -6,6 +7,7 @@ using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
 using System.Reflection;
 using System.Text;
+using UrlShortener_Backend.DbContext;
 
 namespace UrlShortener_Backend;
 
@@ -29,8 +31,19 @@ public class Program
         //});
 
         // Add services to the container.
+        builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
+        ContextFactory.Initialize(
+        builder.Services.BuildServiceProvider().GetRequiredService<IConfiguration>()
+        );
+        JwtHandler.Initialize(
+            builder.Services.BuildServiceProvider().GetRequiredService<IConfiguration>()
+        );
+
+
+        builder.Services.AddSingleton<JwtHandler>();
+
         builder.Services.AddControllers();
-        builder.Services.AddDbContext<PictureNetworkDbContext>(options =>
+        builder.Services.AddDbContext<UrlShortenerDbContext>(options =>
             options.UseSqlServer(builder.Configuration["DbConnectionString"]));
 
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
