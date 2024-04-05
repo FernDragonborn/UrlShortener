@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace UrlShortener_Backend.Models
 {
@@ -13,8 +14,10 @@ namespace UrlShortener_Backend.Models
         [Required]
         public string? ShortUrl { get; set; }
 
+
         [Required]
-        public Guid CreatorId { get; set; }
+        [ForeignKey("UserId")]
+        internal virtual User User { get; set; }
 
         [Required]
         public DateTime CreatedAt { get; set; }

@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using UrlShortener_Backend.DbContext;
 using UrlShortener_Backend.DTOs;
-using UrlShortener_Backend.Models;
+using UrlShortener_Backend.Services;
 
 
 namespace UrlShortener_Backend.Controllers;
@@ -12,11 +10,11 @@ namespace UrlShortener_Backend.Controllers;
 [Route("api/auth")]
 public class AuthController : Controller
 {
-    private readonly UrlShortenerDbContext _context;
+    private readonly IConfiguration _config;
 
-    public AuthController(UrlShortenerDbContext context)
+    public AuthController(IConfiguration config)
     {
-        _context = context;
+        _config = config;
     }
 
     /// <summary>
@@ -30,35 +28,14 @@ public class AuthController : Controller
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [HttpPost("register")]
-    public async Task<IActionResult> Register(UserDto userDto)
+    public IActionResult Register(UserDto userDto)
     {
-        if (_context.Users.FirstOrDefault(x => x.Login == userDto.Login) != default)
+        var result = UserService.RegisterUser(_config, userDto);
+        if (result.IsSuccess)
         {
-            return BadRequest("User with this login already exists");
+            return Created(result.Message, result.Data);
         }
-
-        User user = new()
-        {
-            Salt = BCrypt.Net.BCrypt.GenerateSalt()
-        };
-        user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(userDto.Password + user.Salt, workFactor: 13);
-
-        user.Login = userDto.Login;
-        user.Role = userDto.Role;
-
-        try
-        {
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
-        }
-        catch (Exception ex) { return BadRequest(ex); }
-
-        string token = JwtHandler.CreateToken(user);
-        userDto = new UserDto(user)
-        {
-            JwtToken = token
-        };
-        return Created("api/auth", userDto);
+        return BadRequest(result.Message);
     }
 
     /// <summary>
@@ -72,22 +49,14 @@ public class AuthController : Controller
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [HttpPost("login")]
-    public async Task<IActionResult> LogIn(UserDto userDto)
+    public IActionResult LogIn(UserDto userDto)
     {
-        var user = await _context.Users.FirstOrDefaultAsync(x => x.Login == userDto.Login);
-        if (user is null) { return BadRequest("Wrong login or password"); }
-
-        if (!BCrypt.Net.BCrypt.Verify(userDto.Password + user.Salt, user.PasswordHash))
+        var result = UserService.LogIn(_config, userDto);
+        if (result.IsSuccess)
         {
-            return BadRequest("Wrong login or password");
+            return Ok(result.Data);
         }
-
-        string token = JwtHandler.CreateToken(user);
-        userDto = new UserDto(user)
-        {
-            JwtToken = token
-        };
-        return Ok(userDto);
+        return BadRequest(result.Message);
     }
 
     /// <summary>
@@ -100,15 +69,13 @@ public class AuthController : Controller
     [ProducesResponseType(StatusCodes.Status200OK)]
     [Authorize]
     [HttpPost("renewToken")]
-    public async Task<IActionResult> RenewToken(UserDto userDto)
+    public IActionResult RenewToken(UserDto userDto)
     {
-        var user = await _context.Users.FirstOrDefaultAsync(x => x.Login == userDto.Login);
-        if (user is null) { return BadRequest("User not found"); }
-        string token = JwtHandler.CreateToken(user);
-        userDto = new UserDto(user)
+        var result = UserService.RenewToken(_config, userDto);
+        if (result.IsSuccess)
         {
-            JwtToken = token
-        };
-        return Ok(userDto);
+            return Ok(result.Data);
+        }
+        return BadRequest(result.Message);
     }
 }

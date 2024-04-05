@@ -4,7 +4,7 @@ using System.Security.Claims;
 using System.Text;
 using UrlShortener_Backend.Models;
 
-namespace UrlShortener_Backend;
+namespace UrlShortener_Backend.Services;
 
 public class JwtHandler
 {
@@ -14,7 +14,7 @@ public class JwtHandler
     {
         _keyString = config["JwtHandler:Key"].Trim();
     }
-    public static string? CreateToken(User user)
+    public static string? CreateToken(User user, IConfiguration config)
     {
         if (_keyString.IsNullOrEmpty()) throw new ArgumentException("Encoding key was null of empty");
 
@@ -29,8 +29,8 @@ public class JwtHandler
         var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var jwtObj = new JwtSecurityToken(
-            issuer: "https://localhost:7245",
-            audience: "https://localhost:7245",
+            issuer: config["JwtSettings:Issuer"],
+            audience: config["JwtSettings:Audience"],
             notBefore: DateTime.UtcNow.AddMinutes(-1),
             claims: claims,
             expires: DateTime.UtcNow.Add(TimeSpan.FromMinutes(20)),
