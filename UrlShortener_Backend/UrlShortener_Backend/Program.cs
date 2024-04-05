@@ -1,4 +1,3 @@
-using LittlePictureNetworkBackend.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -7,6 +6,7 @@ using Swashbuckle.AspNetCore.Filters;
 using System.Reflection;
 using System.Text;
 using UrlShortener_Backend.DbContext;
+using UrlShortener_Backend.Identity;
 using UrlShortener_Backend.Services;
 
 namespace UrlShortener_Backend;
@@ -18,8 +18,6 @@ public class Program
         Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
         Console.OutputEncoding = Encoding.GetEncoding(1251);
         Console.InputEncoding = Encoding.GetEncoding(1251);
-
-        DotNetEnv.Env.Load(".env");
 
         var builder = WebApplication.CreateBuilder(args);
 
@@ -42,9 +40,12 @@ public class Program
 
         builder.Services.AddSingleton<JwtHandler>();
 
+        string connectionString = builder.Configuration.GetConnectionString("Default")
+                                  ?? throw new InvalidOperationException("Connection string not found.");
+
         builder.Services.AddControllers();
         builder.Services.AddDbContext<UrlShortenerDbContext>(options =>
-            options.UseSqlServer(builder.Configuration["DbConnectionString"]));
+            options.UseSqlServer(connectionString));
 
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();

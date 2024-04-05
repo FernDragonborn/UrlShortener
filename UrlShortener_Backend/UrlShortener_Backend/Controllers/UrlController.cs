@@ -10,7 +10,6 @@ namespace UrlShortener_Backend.Controllers;
 [Route("api/url")]
 public class UrlController : Controller
 {
-
     [ProducesResponseType(StatusCodes.Status200OK)]
     [HttpGet]
     public IActionResult GetUrls()
@@ -23,7 +22,7 @@ public class UrlController : Controller
     [HttpPost("redirect")]
     public IActionResult Redirect(UrlDto urlDto)
     {
-        var result = UrlService.FindForRedirect(_config, urlDto);
+        var result = UrlService.FindForRedirect(urlDto);
         if (result.IsSuccess)
         {
             return RedirectPermanent(result.Data.LongUrl);

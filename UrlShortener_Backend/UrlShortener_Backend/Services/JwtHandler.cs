@@ -12,7 +12,7 @@ public class JwtHandler
 
     public static void Initialize(IConfiguration config)
     {
-        _keyString = config["JwtHandler:Key"].Trim();
+        _keyString = config["JwtSettings:Key"].Trim();
     }
     public static string? CreateToken(User user, IConfiguration config)
     {
