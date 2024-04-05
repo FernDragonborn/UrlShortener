@@ -22,14 +22,14 @@ namespace UrlShortener_Backend.Services
             return new Result<UrlDto[]>(true, "", arrResponse);
         }
 
-        public static Result<UrlDto> FindForRedirect(UrlDto dto)
+        public static Result<string> FindForRedirect(string ShortUrl)
         {
             var context = ContextFactory.CreateNew();
+            var url = context.Urls.Find(ShortUrl);
 
-            var url = context.Urls.Find(dto.ShortUrl);
-            if (url is null) return new Result<UrlDto>(false, "Url do not exist", null);
+            if (url is null) return new Result<string>(false, "Url does't exist", null);
 
-            return new Result<UrlDto>(true, "Successfully found", new UrlDto(url));
+            return new Result<string>(true, "Successfully found", url.LongUrl);
         }
 
         public static Result<UrlDto> Register(UrlDto urlDto)

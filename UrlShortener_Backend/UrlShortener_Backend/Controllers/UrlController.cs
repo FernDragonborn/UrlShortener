@@ -17,20 +17,6 @@ public class UrlController : Controller
         return Ok(UrlService.GetUrls());
     }
 
-    [ProducesResponseType(StatusCodes.Status301MovedPermanently)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [HttpPost("redirect")]
-    public IActionResult Redirect(UrlDto urlDto)
-    {
-        var result = UrlService.FindForRedirect(urlDto);
-        if (result.IsSuccess)
-        {
-            return RedirectPermanent(result.Data.LongUrl);
-        }
-        return BadRequest(result.Message);
-    }
-
-
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [Authorize]
