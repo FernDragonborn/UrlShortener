@@ -20,7 +20,7 @@ public class JwtHandler
 
         List<Claim> claims = new()
         {
-            new Claim("id", user.UserId.ToString()),
+            new Claim("userId", user.UserId.ToString()),
             new Claim("login", user.Login),
             new Claim("role", user.Role)
         };
@@ -28,14 +28,14 @@ public class JwtHandler
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_keyString));
         var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-        var jwtObj = new JwtSecurityToken(
+        var securityToken = new JwtSecurityToken(
             issuer: config["JwtSettings:Issuer"],
             audience: config["JwtSettings:Audience"],
             notBefore: DateTime.UtcNow.AddMinutes(-1),
             claims: claims,
             expires: DateTime.UtcNow.Add(TimeSpan.FromMinutes(20)),
             signingCredentials: credentials);
-        var jwt = new JwtSecurityTokenHandler().WriteToken(jwtObj);
+        var jwt = new JwtSecurityTokenHandler().WriteToken(securityToken);
 
         return jwt;
     }

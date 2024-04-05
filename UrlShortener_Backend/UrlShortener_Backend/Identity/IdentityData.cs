@@ -1,4 +1,4 @@
-﻿namespace LittlePictureNetworkBackend.Identity;
+﻿namespace UrlShortener_Backend.Identity;
 
 public class IdentityData
 {

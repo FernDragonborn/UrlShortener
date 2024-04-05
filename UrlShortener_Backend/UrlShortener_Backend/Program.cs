@@ -1,4 +1,3 @@
-
 using LittlePictureNetworkBackend.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;

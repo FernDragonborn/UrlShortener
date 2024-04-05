@@ -1,25 +1,25 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace UrlShortener_Backend.Models
+namespace UrlShortener_Backend.Models;
+
+public class UrlData
 {
-    public class UrlData
-    {
-        [Key]
-        public Guid Id { get; set; }
+    [Key]
+    public string? ShortUrl { get; set; }
 
-        [Required]
-        public string? LongUrl { get; set; }
+    [Required]
+    public string? LongUrl { get; set; }
 
-        [Required]
-        public string? ShortUrl { get; set; }
+    [Required]
+    [ForeignKey("UserId")]
+    internal virtual User User { get; set; }
 
+    [Required]
+    public DateTime CreatedAt { get; set; }
 
-        [Required]
-        [ForeignKey("UserId")]
-        internal virtual User User { get; set; }
+    public int Clicks { get; set; } = 0;
 
-        [Required]
-        public DateTime CreatedAt { get; set; }
-    }
+    [Timestamp]
+    public byte[] Version { get; set; }
 }

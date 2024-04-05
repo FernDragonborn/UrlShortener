@@ -30,7 +30,7 @@ public static class UserService
         }
         catch (Exception ex) { return new Result<UserDto>(false, ex.ToString(), null); }
 
-        string token = JwtHandler.CreateToken(user);
+        string token = JwtHandler.CreateToken(user, config);
         userDto = new UserDto(user)
         {
             JwtToken = token
