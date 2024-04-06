@@ -12,12 +12,6 @@ export class UrlService {
 
   baseApiUrl: string = enviroment.baseApiUrl;
 
-  getRedirectionUrl(shortUrl: string | null): Observable<string>{
-    let url = this.baseApiUrl + '/api/redirect/' + shortUrl;
-    console.log('request to: ' + url)
-    return this.http.get<string>(url);
-  }
-
   getUrls(): Observable<UrlDto[]>{
     return this.http.get<UrlDto[]>(this.baseApiUrl + '/api/url/getAll');
   }

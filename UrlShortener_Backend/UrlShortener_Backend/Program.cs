@@ -48,7 +48,16 @@ public class Program
         builder.Services.AddDbContext<UrlShortenerDbContext>(options =>
             options.UseSqlServer(connectionString));
 
-        builder.Services.AddCors(); // Make sure you call this previous to AddMvc
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("AllowAllOrigins",
+                builder =>
+                {
+                    builder.AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader();
+                });
+        });
         builder.Services.AddMvc(options => options.EnableEndpointRouting = false);
 
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -134,7 +143,7 @@ public class Program
         app.UseHttpsRedirection();
         app.UseStaticFiles();
 
-        app.UseCors(policy => policy.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
+        app.UseCors("AllowAllOrigins");
         app.UseMvc();
 
         app.UseAuthentication();

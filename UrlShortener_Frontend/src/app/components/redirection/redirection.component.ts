@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UrlService } from '../../services/url.service';
+import { enviroment } from '../../enviroments/enviroment';
 
 @Component({
   selector: 'app-url-redirection',
@@ -14,19 +15,7 @@ export class RedirectionComponent implements OnInit {
   ngOnInit(): void {
     const shortUrl : string | null = this.route.snapshot.paramMap.get('shortCode');
     let LongUrl: string | undefined;
-    this.urlService.getRedirectionUrl(shortUrl) 
-    .subscribe(response =>{ LongUrl = response
-      console.log(response)
-    })
-    console.log(this.longUrl);
-    if (LongUrl) {
-      window.open(this.getLongUrlFromShortCode(this.longUrl));
-    }
-  }
-
-  private getLongUrlFromShortCode(shortUrl: string): string {
-    this.urlService.getRedirectionUrl(shortUrl)
-      .subscribe(response => this.longUrl = response);
-    return this.longUrl;
+    window.open(enviroment.baseApiUrl + '/api/redirect/' + shortUrl);
+    window.close();
   }
 }
