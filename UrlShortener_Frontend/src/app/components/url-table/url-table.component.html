@@ -1,0 +1,77 @@
+<div
+  style="width: 50%; min-width: 400px"
+  class="row align-items-center mx-auto"
+>
+  <div class="col md-12">
+    @if(isLoggedIn){
+    <form (ngSubmit)="shortenUrl()" [formGroup]="urlForm" novalidate>
+      <div class="input-group input-group-lg">
+        <input
+          required
+          type="url"
+          spellcheck="false"
+          autocomplete="off"
+          autocorrect="off"
+          id="url-input"
+          autocapitalize="none"
+          placeholder="Enter a link to shorten it"
+          class="form-control input-lg input-xlg"
+          formControlName="originalUrl"
+        />
+        <div>
+          <button
+            aria-label="Create Short Link"
+            type="submit"
+            class="btn btn-primary btn-lg"
+            [disabled]="urlForm.invalid"
+          >
+            <span class="d-none d-md-inline-block">Shorten URL</span>
+            <i aria-hidden="true" class="fa fa-chevron-right"></i>
+          </button>
+        </div>
+      </div>
+    </form>
+    } @if(links.length > 0){
+    <table class="table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Short url</th>
+          <th>Long Url</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let link of links; let i = index">
+          <td>{{ i + 1 }}</td>
+          <td>
+            <a [href]="link.shortUrl" target="_blank">{{ link.shortUrl }}</a>
+          </td>
+          <td>
+            <a [href]="link.longUrl" target="_blank">{{ link.longUrl }}</a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    } @else {
+    <div>Loading...</div>
+    } @if(selectedLink) {
+    <div class="modal">
+      <div class="modal-content">
+        <span class="close" (click)="hideLinkInfo()">&times;</span>
+        <p>
+          Короткая ссылка:
+          <a [href]="selectedLink.shortUrl" target="_blank">{{
+            selectedLink.shortUrl
+          }}</a>
+        </p>
+        <p>
+          Длинная ссылка:
+          <a [href]="selectedLink.longUrl" target="_blank">{{
+            selectedLink.longUrl
+          }}</a>
+        </p>
+      </div>
+    </div>
+    }
+  </div>
+</div>

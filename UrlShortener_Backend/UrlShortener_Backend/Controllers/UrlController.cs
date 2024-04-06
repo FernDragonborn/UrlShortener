@@ -11,10 +11,10 @@ namespace UrlShortener_Backend.Controllers;
 public class UrlController : Controller
 {
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [HttpGet]
+    [HttpGet("getAll")]
     public IActionResult GetUrls()
     {
-        return Ok(UrlService.GetUrls());
+        return Ok(UrlService.GetUrls().Data);
     }
 
     [ProducesResponseType(StatusCodes.Status201Created)]
@@ -22,7 +22,10 @@ public class UrlController : Controller
     [Authorize]
     [HttpPost("register")]
     public IActionResult Register(UrlDto urlDto)
+
     {
+        urlDto.UserId = User.Claims.FirstOrDefault(c => c.Type == "userId").Value;
+
         var result = UrlService.Register(urlDto);
         if (result.IsSuccess)
         {

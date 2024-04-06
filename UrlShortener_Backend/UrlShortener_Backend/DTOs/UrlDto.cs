@@ -4,6 +4,8 @@ namespace UrlShortener_Backend.DTOs
 {
     public class UrlDto
     {
+        public UrlDto() { }
+
         public UrlDto(UrlData url)
         {
             ShortUrl = url.ShortUrl;

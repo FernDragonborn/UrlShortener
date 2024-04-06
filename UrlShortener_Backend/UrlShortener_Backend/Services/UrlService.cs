@@ -1,4 +1,5 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using UrlShortener_Backend.DbContext;
 using UrlShortener_Backend.DTOs;
@@ -12,7 +13,7 @@ namespace UrlShortener_Backend.Services
         {
             var context = ContextFactory.CreateNew();
 
-            var arrStored = context.Urls.ToArray();
+            var arrStored = context.Urls.Include(u => u.User).ToArray();
             UrlDto[] arrResponse = new UrlDto[arrStored.Length];
             for (int i = 0; i < arrStored.Length; i++)
             {
@@ -39,7 +40,8 @@ namespace UrlShortener_Backend.Services
             UrlData? url = context.Urls.FirstOrDefault(x => x.LongUrl == urlDto.LongUrl);
             if (url is not null) return new Result<UrlDto>(false, "Url already exists", null);
 
-            var user = context.Users.Find(Guid.Parse(urlDto.UserId));
+            Guid userId = Guid.Parse(urlDto.UserId);
+            var user = context.Users.Find(userId);
             if (user is null) return new Result<UrlDto>(false, "User do not exist", null);
 
 

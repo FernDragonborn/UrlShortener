@@ -13,7 +13,7 @@ public class UrlData
 
     [Required]
     [ForeignKey("UserId")]
-    internal virtual User User { get; set; }
+    public virtual User User { get; set; }
 
     [Required]
     public DateTime CreatedAt { get; set; }

@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -23,12 +24,14 @@ public class Program
 
         //Uncomment for api models problems
         //https://mirsaeedi.medium.com/asp-net-core-customize-validation-error-message-9022c12d3d7d
-        //builder.Services.Configure<ApiBehaviorOptions>(apiBehaviorOptions =>
-        //{
-        //    apiBehaviorOptions.SuppressModelStateInvalidFilter = true;
-        //});
+#if DEBUG
+        builder.Services.Configure<ApiBehaviorOptions>(apiBehaviorOptions =>
+            {
+                apiBehaviorOptions.SuppressModelStateInvalidFilter = true;
+            });
+#endif
 
-        // Add services to the container.
+        //Add services to the container.
         builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
         ContextFactory.Initialize(
         builder.Services.BuildServiceProvider().GetRequiredService<IConfiguration>()
@@ -37,15 +40,16 @@ public class Program
             builder.Services.BuildServiceProvider().GetRequiredService<IConfiguration>()
         );
 
-
         builder.Services.AddSingleton<JwtHandler>();
 
         string connectionString = builder.Configuration.GetConnectionString("Default")
                                   ?? throw new InvalidOperationException("Connection string not found.");
-
         builder.Services.AddControllers();
         builder.Services.AddDbContext<UrlShortenerDbContext>(options =>
             options.UseSqlServer(connectionString));
+
+        builder.Services.AddCors(); // Make sure you call this previous to AddMvc
+        builder.Services.AddMvc(options => options.EnableEndpointRouting = false);
 
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
@@ -130,9 +134,8 @@ public class Program
         app.UseHttpsRedirection();
         app.UseStaticFiles();
 
-        app.UseRouting();
         app.UseCors(policy => policy.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
-
+        app.UseMvc();
 
         app.UseAuthentication();
         app.UseAuthorization();

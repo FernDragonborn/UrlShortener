@@ -9,23 +9,23 @@ public class User
 
     [Required]
     [MaxLength(50)]
-    public string Role { get; set; }
+    public string? Role { get; set; }
 
     [MaxLength(50)]
     public string? Name { get; set; }
 
     [Required]
     [MaxLength(50)]
-    public string Login { get; set; }
+    public string? Login { get; set; }
 
     [Required]
     [MaxLength(60)]
-    public string PasswordHash { get; set; }
+    public string? PasswordHash { get; set; }
 
     [Required]
     [MaxLength(60)]
-    public string Salt { get; set; }
+    public string? Salt { get; set; }
 
     [Timestamp]
-    public byte[] Version { get; set; }
+    public byte[]? Version { get; set; }
 }

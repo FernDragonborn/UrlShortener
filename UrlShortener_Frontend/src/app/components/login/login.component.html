@@ -1,0 +1,40 @@
+<div
+  class="p-3 d-flex flex-column position-absolute top-50 start-50 translate-middle"
+  style="width: 30%"
+>
+  <div class="ps-2 pb-2 fs-2">Увійти</div>
+  <div class="p-1">
+    <input
+      class="p-2 rounded-2 bg-block border-0"
+      style="width: 100%"
+      [(ngModel)]="user.login"
+      placeholder="Логін"
+      type="text"
+    />
+  </div>
+  <div class="p-1">
+    <input
+      class="p-2 rounded-2 bg-block border-0"
+      style="width: 100%"
+      [(ngModel)]="user.password"
+      placeholder="Пароль"
+      type="password"
+    />
+  </div>
+  <div class="d-flex flex-column justify-content-around p-1">
+    <button
+      class="btn px-4 w-50 align-self-center"
+      style="background-color: #48a391; color: white"
+      (click)="login(user)"
+    >
+      Log in
+    </button>
+    <a
+      class="p-2 link-underline link-underline-opacity-0"
+      style="margin-left: auto; margin-right: auto"
+      (click)="register(user)"
+    >
+      Register
+    </a>
+  </div>
+</div>
